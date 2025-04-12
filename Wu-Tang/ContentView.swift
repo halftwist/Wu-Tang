@@ -11,7 +11,9 @@ struct ContentView: View {
     
     @State private var enteredName = ""
     @State private var staticCoderNameIs = ""
-    @State private var wuTangName = "Undefined Breakpoint"
+    @State private var wuTangName = ""
+    @State private var imageName = "wu-tang"
+    @State private var isHidden: Bool = false
     @FocusState private var isFocused: Bool
     private let firstColumn = ["Algorithmic",
                                "Byte",
@@ -97,6 +99,14 @@ struct ContentView: View {
 //                .focused(FocusState<Bool>.Binding)
                 .padding()
                 .focused($isFocused)
+                .onChange(of: isFocused) { // isFocus changes when keyboard toggles
+                    if isFocused == true { // if keyboard shows
+                        imageName = ""
+                        enteredName = ""
+                        staticCoderNameIs = ""
+                        wuTangName = ""
+                    }
+                }
             
             Spacer()
             
@@ -111,9 +121,10 @@ struct ContentView: View {
             Button {
                 //TODO: <#code#>
 //                wuTangName = getWuTangName(enteredName: enteredName)
-                wuTangName = getWuTangName2(name: enteredName)
+                wuTangName = getWuTangName(name: enteredName)
                 isFocused = false
                 staticCoderNameIs = "Your Wu-Tang Coder Name is:"
+                imageName = "wu-tang"
             } label: {
                 Image("wu-tang-button")
                 Text("Get It!")
@@ -137,9 +148,9 @@ struct ContentView: View {
             
             Spacer()
             
-            Image("wu-tang")
+            Image(imageName)
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .scaledToFit()
             
             Spacer()
         }
@@ -147,22 +158,23 @@ struct ContentView: View {
         //        .padding()
     }
     
-    func getWuTangName2(name: String) -> String {
+    func getWuTangName(name: String) -> String {
         var localName = name
         let firstLetter = localName.removeFirst()
         print ("first letter is \(firstLetter)")
         var firstColumnIndex = 0
         // loop through all elements of firstColumn & compare first letter
         for i in 0..<firstColumn.count {
-            if firstColumn[i].first == firstLetter {
+            if firstColumn[i].first?.uppercased() == firstLetter.uppercased() {
                 firstColumnIndex = i == 0 ? 25 : i - 1
             }
         }
         return "\(firstColumn[firstColumnIndex]) \(secondColumn.randomElement()!)"
     }
     
+//    John's attempt to anwser question
     
-    func getWuTangName(enteredName: String) -> String {   // Johns Version
+    func getWuTangName2(enteredName: String) -> String {   // Johns Version
         var firstLetterOfName = self.enteredName.removeFirst()
         var indexOfPreviousLetter = 0
         var wuTangName: String = ""
